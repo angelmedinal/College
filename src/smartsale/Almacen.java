@@ -1,7 +1,12 @@
 package smartsale;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -9,7 +14,7 @@ import javax.swing.table.TableRowSorter;
 public class Almacen extends JFrame {
     //INSNTANCIA CLASE BLOQUEO
     Bloqueador bloqueo = new Bloqueador();
-    
+
     DefaultTableModel modelo;//JTABLE
     private JLabel etiProducto, etiPrecio, etiAlmacen;
     private JTextField campoNombreProducto, campoPrecioProducto;
@@ -25,10 +30,10 @@ public class Almacen extends JFrame {
         Bloqueo();
     }
 
-    private void Bloqueo(){
+    private void Bloqueo() {
         bloqueo.numdec(campoPrecioProducto);
     }
-    
+
     private void Objetos() {
         //ETIQUETA 
         etiProducto = new JLabel("NOMBRE DEL PRODUCTO: ");
@@ -68,7 +73,7 @@ public class Almacen extends JFrame {
         guardarCambios.setBounds(50, 460, 240, 25);
         guardarCambios.setFont(new Font("new times roman", Font.PLAIN, 13));
         add(guardarCambios);
-        
+
         quitarProducto = new JButton("QUITAR PRODUCTO");
         quitarProducto.setBounds(310, 460, 240, 25);
         quitarProducto.setFont(new Font("new times roman", Font.PLAIN, 13));
@@ -82,7 +87,7 @@ public class Almacen extends JFrame {
         add(scroll);
         scroll.setBounds(50, 190, 500, 250);
         setLayout(null);
-        
+
         //ORDENA TABLA
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(modelo);
         tabla.setRowSorter(sorter);
@@ -104,22 +109,22 @@ public class Almacen extends JFrame {
                 }
             }
         });
-        
+
         //BOTÓN LIMPIAR CASILLAS
-        limpiarCasillas.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evento){
-                if(campoNombreProducto.getText().isEmpty() || campoPrecioProducto.getText().isEmpty()){
-                    JOptionPane.showMessageDialog(null,"NO HAY NADA QUE LIMPIAR");
-                }else{
-                    int resp=JOptionPane.showConfirmDialog(null,"¿DESEA LIMPIAR LAS CASILLAS?");
-                    if(resp==JOptionPane.YES_OPTION){
+        limpiarCasillas.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evento) {
+                if (campoNombreProducto.getText().isEmpty() || campoPrecioProducto.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "NO HAY NADA QUE LIMPIAR");
+                } else {
+                    int resp = JOptionPane.showConfirmDialog(null, "¿DESEA LIMPIAR LAS CASILLAS?");
+                    if (resp == JOptionPane.YES_OPTION) {
                         campoNombreProducto.setText("");
                         campoPrecioProducto.setText("");
                     }
                 }
             }
         });
-        
+
         //BOTÓN QUITAR
         quitarProducto.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
@@ -132,6 +137,34 @@ public class Almacen extends JFrame {
                     }
                 } else {//SIGNIFICA QUE NO FUE SELECCIONADA NINGUNA OPCIÓN
                     JOptionPane.showMessageDialog(null, "SELECCIONE ALGO A ELIMINAR");
+                }
+            }
+        });
+
+        //BOTÓN GUARDAR CAMBIOS
+        guardarCambios.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evento) {
+                try {
+                    File fichero = new File("Almacen.txt");
+                    fichero.createNewFile();
+                    FileWriter fw = new FileWriter(fichero);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    for (int i = 0; i < tabla.getRowCount(); i++) //realiza un barrido por filas.
+                    {
+                        for (int j = 0; j < tabla.getColumnCount(); j++) //realiza un barrido por columnas.
+                        {
+                            bw.write((String) (tabla.getValueAt(i, j)));
+                            if (j < tabla.getColumnCount() - 1) { //agrega separador "," si no es el ultimo elemento de la fila.
+                                bw.write(" ");
+                            }
+                        }
+                        
+                        bw.newLine(); //inserta nueva linea.
+                    }
+
+                    bw.close(); //cierra archivo!
+                    JOptionPane.showMessageDialog(null, "EL ALMACÉN SE HA SALVADO CORRECTAMENTE");
+                } catch (IOException e) {
                 }
             }
         });

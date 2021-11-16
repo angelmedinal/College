@@ -1,6 +1,5 @@
 package smartsale;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,14 +16,12 @@ import javax.swing.table.DefaultTableModel;
 
 public class PuntodeVenta extends JFrame {
 
-    String cadena = "";
-    String n = "";
-    char[] cadena_div;
     //INSTANCIAR CLASE BLOQUEADOR
     Bloqueador bloqueo = new Bloqueador();
     //INSTANCIAR CLASE ALMACEN
     Almacen almacen = new Almacen();
-    //INSTANCIAR CLASE BOCINA
+    //INSTANCIAR CLASE MENSAJE
+    Mensajes mensaje = new Mensajes();
 
     private JLabel etiquetaProducto, etiquetaProductoElegido, etiquetaPrecio, etiquetaUnidades;
     private JLabel etiquetaCarrito, etiquetaCompra, etiquetaImporte, etiquetaPago;
@@ -32,17 +29,16 @@ public class PuntodeVenta extends JFrame {
     private JButton botonDetalles, botonLimpiar, botonAgregaralCarrito;
     private JButton botonQuitarProducto, botonVaciarCarrito, botonTotalapagar, botonDescuento, botonGenerarTicket;
     private Double costo, unidades, total;
-    private String precio, cantidad, importe;
-    // private JButton Ver;
+    private String precio, importe;
     private JButton Imprimirticket, Borrarticket;
     private JTextField campoUnidades;
     private JTextArea Area;
-    private JScrollPane jsparea, jspmenu;
-    private JComboBox listaDespegableProductos, listaDespegablePrecios;
+    private JScrollPane jsparea;
+    private JComboBox listaDespegableProductos;
     DefaultTableModel modelo;//JTABLE
-    private JList<String> menu;
-
+    private String a1, a2;
     //MENÚ 
+    double suma = 0;
     private JMenuBar Menu;
     private JMenu Archivo;
     private JMenuItem itemNuevo;
@@ -50,10 +46,15 @@ public class PuntodeVenta extends JFrame {
     private JMenuItem itemGuarda;
     private JMenuItem itemAlmacenar;
 
+    //CADENAS
+    String cadena = "";
+    String n = "";
+    char[] cadena_div;
+
     //CONSTRUCTOR//CONSTRUCTOR//CONSTRUCTOR//CONSTRUCTOR//CONSTRUCTOR//CONSTRUCTOR
     public PuntodeVenta() {
         setTitle("PUNTO DE VENTA");
-        setSize(1370, 850);
+        setSize(1370, 800);
         setResizable(false);
         setLocationRelativeTo(null);
         Objetos();
@@ -66,24 +67,15 @@ public class PuntodeVenta extends JFrame {
         bloqueo.arenum(Area);
     }
 
+    //AGREGA DATOS DEL TXT ALMACEN AL JCOMBOBOX
     private final String rutaProductos = System.getProperties().getProperty("user.dir");
 
     public void listaDesplegable() {
         //JCOMBOX
-    /*String [] Productos ={"ARROZ",
-         "COCA-COLA 3 LTS", "COCA-COLA 2.5 LTS", "COCA-COLA 2 LTS","COCA-COLA 1.5 LTS", 
-         "COCA-COLA 1 LTS", "COCA-COLA 600 ML", "COCA-COLA 250 ML",
-         "CHILES CHIPOTLES CHICOS", "PEPSI"};*/
-        /*final JComboBox*/
         listaDespegableProductos = new JComboBox();
         listaDespegableProductos.setBounds(118, 50, 192, 25);
         add(listaDespegableProductos);
 
-        //JLIST
-        /*menu= new JList();
-         jspmenu = new JScrollPane (menu);
-         jspmenu.setBounds(118, 50, 192, 25);
-         add(jspmenu);*/
         File arch = null;
         FileReader FileR = null;
         BufferedReader BufferedR = null;
@@ -100,63 +92,6 @@ public class PuntodeVenta extends JFrame {
             }
 
             listaDespegableProductos.setModel(listaProductos);
-            /*cadena=informacion;
-             cadena_div = cadena.toCharArray();
-             //String n="";
-             for(int i=0; i< cadena_div.length; i++){
-             if(Character.isDigit(cadena_div[i])){
-             n=n+cadena_div[i];
-             }
-             }*/
-        } catch (Exception e) {
-        } finally {
-            try {
-                if (null != FileR) {
-                    FileR.close();
-                }
-            } catch (IOException e2) {
-            }
-        }
-    }
-
-    private final String rutaPrecios = System.getProperties().getProperty("user.dir");
-
-    public void Precios() {
-        listaDespegablePrecios = new JComboBox();
-        listaDespegablePrecios.setBounds(118, 50, 192, 25);
-        //add(listaDespegablePrecios);
-
-        //JLIST
-        /*menu= new JList();
-         jspmenu = new JScrollPane (menu);
-         jspmenu.setBounds(118, 50, 192, 25);
-         add(jspmenu);*/
-        File arch = null;
-        FileReader FileR = null;
-        BufferedReader BufferedR = null;
-
-        try {
-            arch = new File(rutaPrecios + "//Precios.txt");
-            FileR = new FileReader(arch);
-            BufferedR = new BufferedReader(FileR);
-            String informacion = null;
-            //  String info2=informacion;
-            DefaultComboBoxModel listaPrecios = new DefaultComboBoxModel();
-            listaPrecios.addElement("");
-
-            while ((informacion = BufferedR.readLine()) != null) {
-                listaPrecios.addElement(informacion);
-            }
-            listaDespegablePrecios.setModel(listaPrecios);
-
-            /*  cadena=informacion;
-             cadena_div = cadena.toCharArray();
-             //String n="";
-             for(int i=0; i< cadena_div.length; i++){
-             if(Character.isDigit(cadena_div[i])){
-             n=n+cadena_div[i];
-             }
-             }*/
         } catch (Exception e) {
         } finally {
             try {
@@ -328,6 +263,7 @@ public class PuntodeVenta extends JFrame {
 
         //ÁREA
         Area = new JTextArea();
+        Area.setLineWrap(true);
         jsparea = new JScrollPane(Area);
         jsparea.setBounds(710, 100, 620, 500);
         add(jsparea);
@@ -365,20 +301,19 @@ public class PuntodeVenta extends JFrame {
                     }
                 }
                 etiPrecio.setText("" + n);
-                ///  }
-                cadena="";
-                n="";
-                //cadena_div="";
-//etiPrecio.setText("");
+                cadena = "";
+                n = "";
             }
         });
 
         //BOTÓN LIMPIAR
         botonLimpiar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
-                etiNombre.setText(null);
-                etiPrecio.setText(null);
+                etiNombre.setText("");
+                etiPrecio.setText("");
                 campoUnidades.setText("");
+                n = "";
+                cadena = "";
                 int respuesta = JOptionPane.showConfirmDialog(null, "¿TAMBIÉN DESEA LIMPIAR EL CARRITO?");
                 if (respuesta == JOptionPane.YES_OPTION) {
                     int filaa = tabla.getRowCount();//VERIFICA SI HAY VECTORES EN JTABLE
@@ -408,9 +343,11 @@ public class PuntodeVenta extends JFrame {
         botonAgregaralCarrito.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
                 //bocina.sonido1();
-                cadena="";
                 String[] info = new String[4];//TAMAÑO DEL JTABLE
-                if (etiNombre.getText().isEmpty() || etiPrecio.getText().isEmpty() || campoUnidades.getText().isEmpty()) {
+                if (campoUnidades.getText().isEmpty()) {
+                    campoUnidades.setText("" + 1);
+                }
+                if (etiNombre.getText().isEmpty() || etiPrecio.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "NO HAY NADA QUE VENDER");
                 } else {
                     //NOMBRE
@@ -428,16 +365,17 @@ public class PuntodeVenta extends JFrame {
                     info[3] = importe;
                     modelo.addRow(info);
                 }
-
-                etiNombre.setText(null);
-                etiPrecio.setText(null);
+                campoUnidades.setText("");
+                etiPrecio.setText("");
+                etiNombre.setText("");
+                cadena = "";
+                n = "";
             }
         });
 
         //BOTÓN QUITAR
         botonQuitarProducto.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
-                //bocina.sonido1();
                 int fila = tabla.getSelectedRow();//VERIFICA QUE VECTOR HA SIDO SELECCIONADO
                 if (fila >= 0) {//SIGNIFICA QUE SI FUE SELECCIONADA UNA OPCIÓN
                     int respuestaquitar = JOptionPane.showConfirmDialog(null, "¿DESEA QUITAR ESTE PRODUCTO DEL CARRITO?");
@@ -453,8 +391,9 @@ public class PuntodeVenta extends JFrame {
         //BOTÓN TOTAL A PAGAR
         botonTotalapagar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
+                suma = 0;
                 int contar = modelo.getRowCount();//CUENTA CUANTOS VECTORES HAY
-                double suma = 0;
+                // double suma = 0;
                 for (int i = 0; i < contar; i++) {
                     suma = suma + Double.parseDouble(modelo.getValueAt(i, 3).toString());
                 }
@@ -481,13 +420,65 @@ public class PuntodeVenta extends JFrame {
                 campoUnidades.setText("");
                 etiPrecio.setText("");
                 etiNombre.setText("");
+                cadena = "";
+                n = "";
             }
         });
 
         //BOTÓN VER COMPRA
         botonGenerarTicket.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Area.setText(campoUnidades.getText() + "\n" + etiNombre.getText() + "\n" + etiPrecio.getText());
+                int filaa = tabla.getRowCount();//VE SI HAY FILAS EN LA JTABLE
+                //VERIFICA SI LA ETIQUETA DE PAGO ESTA VACÍA
+                if (etiquetaPago.getText().isEmpty()) {
+                    //CÁLCULA TOTAL A PAGAR
+                    int contar = modelo.getRowCount();//CUENTA CUANTOS VECTORES HAY
+                    for (int i = 0; i < contar; i++) {
+                        suma = suma + Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                    }
+                }
+                //SI EL AREA ESTA VACÍA HACE ESTO
+                if (Area.getText().isEmpty()) {
+                    if (filaa == 0) {
+                        JOptionPane.showMessageDialog(null, "EL CARRITO ESTA VACÍO");
+                    } else {
+                        //GENERA EL TICKET DE PAGO
+                        etiquetaPago.setText("$ " + suma);
+                        Area.setText(Area.getText() + mensaje.Bienvenida(a2) + "\n\n");
+                        Area.setText(Area.getText() + "Producto\t\tPrecio\tCantidad\tTotal\n\n");
+                        for (int i = 0; i < modelo.getRowCount(); i++) {
+                            String Producto = modelo.getValueAt(i, 0).toString();
+                            String Precio = modelo.getValueAt(i, 1).toString();
+                            String Cantidad = modelo.getValueAt(i, 2).toString();
+                            String Total = modelo.getValueAt(i, 3).toString();
+                            Area.setText(Area.getText() + Producto + "\t\t$" + Precio + "\t" + Cantidad + "\t$" + Total + "\n\n");
+                        }
+                        Area.setText(Area.getText() + "\nSu Total a Pagar es de :\t$" + suma + "\n\n" + mensaje.Agradecimiento(a1));
+                    }
+                } else {//SI EL AREA NO ESTA VACÍA HACE ESTO
+                    //CÁLCULA TOTAL A PAGAR
+                    int contar = modelo.getRowCount();//CUENTA CUANTOS VECTORES HAY
+                    for (int i = 0; i < contar; i++) {
+                        suma = suma + Double.parseDouble(modelo.getValueAt(i, 3).toString());
+                    }
+                    Area.setText("");
+                    if (filaa == 0) {
+                        JOptionPane.showMessageDialog(null, "EL CARRITO ESTA VACÍO");
+                    } else {
+                        //GENERA EL TICKET DE PAGO
+                        etiquetaPago.setText("$ " + suma);
+                        Area.setText(Area.getText() + mensaje.Bienvenida(a2) + "\n\n");
+                        Area.setText(Area.getText() + "Producto\t\tPrecio\tCantidad\tTotal\n\n");
+                        for (int i = 0; i < modelo.getRowCount(); i++) {
+                            String Producto = modelo.getValueAt(i, 0).toString();
+                            String Precio = modelo.getValueAt(i, 1).toString();
+                            String Cantidad = modelo.getValueAt(i, 2).toString();
+                            String Total = modelo.getValueAt(i, 3).toString();
+                            Area.setText(Area.getText() + Producto + "\t\t$" + Precio + "\t" + Cantidad + "\t$" + Total + "\n\n");
+                        }
+                        Area.setText(Area.getText() + "\nSu Total a Pagar es de :\t$" + suma + "\n\n" + mensaje.Agradecimiento(a1));
+                    }
+                }
             }
         });
 
@@ -525,7 +516,24 @@ public class PuntodeVenta extends JFrame {
         //ITEM NUEVO
         itemNuevo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evento) {
+                int filaa = tabla.getRowCount();//VE SI HAY FILAS EN LA JTABLE
+                int fila = tabla.getRowCount();
+                for (int i = fila - 1; i >= 0; i--) {
+                    modelo.removeRow(i);
+                }
+                etiquetaPago.setText("");
+                campoUnidades.setText("");
+                etiPrecio.setText("");
+                etiNombre.setText("");
+                cadena = "";
+                n = "";
                 Area.setText("");
+                etiquetaPago.setText("");
+                campoUnidades.setText("");
+                etiPrecio.setText("");
+                etiNombre.setText("");
+                cadena = "";
+                n = "";
             }
         });
 

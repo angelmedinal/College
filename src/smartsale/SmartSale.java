@@ -1,5 +1,4 @@
 package smartsale;
-import javax.swing.*;
 import javax.swing.JFrame;
 
 public class SmartSale extends JFrame {

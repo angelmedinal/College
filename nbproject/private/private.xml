@@ -4,9 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/Almacen.java</file>
+            <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/Mensajes.java</file>
             <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/Bloqueador.java</file>
             <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/PuntodeVenta.java</file>
             <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/Login.java</file>
+            <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/SmartSale.java</file>
+            <file>file:/C:/Users/axelg/Documents/NetBeansProjects/SmartSale/src/smartsale/Configurar.java</file>
         </group>
     </open-files>
 </project-private>
